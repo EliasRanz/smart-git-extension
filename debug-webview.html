@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' https://*.vscode-cdn.net 'unsafe-inline'; script-src 'nonce-yRg6vC6RHMBAKKlMt7pPcGvw3GP1urAu';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://file%2B.vscode-resource.vscode-cdn.net/Users/elias.ranz-schleifer/git/misc/vscode-git-extension/media/reset.css" rel="stylesheet">
+    <link href="https://file%2B.vscode-resource.vscode-cdn.net/Users/elias.ranz-schleifer/git/misc/vscode-git-extension/media/vscode.css" rel="stylesheet">
+    <title>Smart Git</title>
+</head>
+<body>
+    
+            <style>
+                .main-container {
+                    padding: 8px;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    font-family: var(--vscode-font-family);
+                    color: var(--vscode-foreground);
+                }
+                
+                .message-section, .options-section, .actions-section {
+                    margin-bottom: 8px;
+                    padding: 12px;
+                    background-color: var(--vscode-editor-background);
+                    border: 1px solid var(--vscode-panel-border);
+                    border-radius: 6px;
+                }
+                
+                .commit-textarea {
+                    width: 100%;
+                    min-height: 80px;
+                    padding: 8px;
+                    border: 2px solid var(--vscode-input-border);
+                    background-color: var(--vscode-input-background);
+                    color: var(--vscode-input-foreground);
+                    font-family: var(--vscode-editor-font-family);
+                    font-size: var(--vscode-editor-font-size);
+                    line-height: 1.4;
+                    border-radius: 4px;
+                    resize: vertical;
+                    box-sizing: border-box;
+                }
+                
+                .btn {
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-family: var(--vscode-font-family);
+                    font-size: 13px;
+                    font-weight: 500;
+                    display: inline-block;
+                    margin-right: 8px;
+                    background-color: var(--vscode-button-background);
+                    color: var(--vscode-button-foreground);
+                }
+                
+                .btn-primary {
+                    background-color: #007ACC;
+                    color: white;
+                }
+                
+                .btn-secondary {
+                    background-color: #5A5A5A;
+                    color: white;
+                }
+                
+                .btn:hover {
+                    opacity: 0.8;
+                }
+                
+                .actions-section {
+                    display: flex !important;
+                    flex-direction: row;
+                    gap: 8px;
+                    align-items: center;
+                    min-height: 40px;
+                    padding: 8px;
+                }
+                
+                .checkbox-label {
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    user-select: none;
+                    font-size: 13px;
+                    color: var(--vscode-foreground);
+                }
+                
+                .ai-button {
+                    position: absolute;
+                    top: 4px;
+                    right: 4px;
+                    background-color: var(--vscode-button-secondaryBackground);
+                    color: var(--vscode-button-secondaryForeground);
+                    border: 1px solid var(--vscode-button-border);
+                    padding: 4px 8px;
+                    font-size: 11px;
+                    cursor: pointer;
+                    border-radius: 3px;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+                
+                .message-container {
+                    position: relative;
+                }
+            </style>
+            
+            <div class="main-container">
+                <section class="message-section">
+                    <div class="message-container">
+                        <label for="commitMessage">Commit Message</label>
+                        <textarea 
+                            id="commitMessage" 
+                            class="commit-textarea" 
+                            placeholder="Enter commit message or generate one..." 
+                            rows="4">
+                        </textarea>
+                        <button id="generateButton" type="button" class="ai-button">
+                            <span class="ai-icon">✨</span>
+                            <span class="ai-text">Generate with AI</span>
+                            <span class="ai-loading" style="display: none;">⟳</span>
+                        </button>
+                    </div>
+                </section>
+                
+                <section class="options-section">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="amendCheckbox">
+                        <span> Amend last commit</span>
+                    </label>
+                </section>
+                
+                <section class="actions-section">
+                    <button id="commitButton" type="button" class="btn btn-primary">
+                        Commit
+                    </button>
+                    <button id="commitPushButton" type="button" class="btn btn-secondary">
+                        Commit & Push
+                    </button>
+                </section>
+                
+                <div id="statusMessage" class="status-message" style="display: none;"></div>
+            </div>
+        
+    <script nonce="yRg6vC6RHMBAKKlMt7pPcGvw3GP1urAu" src="https://file%2B.vscode-resource.vscode-cdn.net/Users/elias.ranz-schleifer/git/misc/vscode-git-extension/media/main.js"></script>
+</body>
+</html>

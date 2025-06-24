@@ -2,7 +2,7 @@
 
 /* Main Container */
 .main-container {
-    padding: 16px;
+    padding: 8px;
     max-width: 600px;
     margin: 0 auto;
     font-family: var(--vscode-font-family);
@@ -20,42 +20,25 @@
     flex-shrink: 0;
 }
 
-/* Header Styles */
-.panel-header {
-    margin-bottom: 24px;
-    text-align: center;
-}
-
-.panel-title {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-    color: var(--vscode-foreground);
-    background: linear-gradient(135deg, var(--vscode-textLink-foreground), var(--vscode-textLink-activeForeground));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
 /* Section Styles */
 .message-section, .options-section, .actions-section {
-    margin-bottom: 20px;
-    padding: 16px;
+    margin-bottom: 8px;
+    padding: 12px;
     background-color: var(--vscode-editor-background);
     border: 1px solid var(--vscode-panel-border);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Textarea Container */
-.textarea-container {
+.textarea-container, .message-container {
     position: relative;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .textarea-label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     font-weight: 500;
     font-size: 13px;
     color: var(--vscode-descriptionForeground);
@@ -63,15 +46,15 @@
 
 .commit-textarea {
     width: 100%;
-    min-height: 100px;
-    padding: 12px;
+    min-height: 80px;
+    padding: 8px;
     border: 2px solid var(--vscode-input-border);
     background-color: var(--vscode-input-background);
     color: var(--vscode-input-foreground);
     font-family: var(--vscode-editor-font-family);
     font-size: var(--vscode-editor-font-size);
-    line-height: 1.5;
-    border-radius: 6px;
+    line-height: 1.4;
+    border-radius: 4px;
     resize: vertical;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
@@ -88,56 +71,6 @@
     opacity: 0.7;
 }
 
-/* AI Generate Button */
-.ai-generate-btn {
-    background: linear-gradient(135deg, var(--vscode-button-background), var(--vscode-button-hoverBackground));
-    color: var(--vscode-button-foreground);
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: var(--vscode-font-family);
-    font-size: 13px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.ai-generate-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    background: linear-gradient(135deg, var(--vscode-button-hoverBackground), var(--vscode-button-background));
-}
-
-.ai-generate-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.ai-icon {
-    font-size: 14px;
-    animation: sparkle 2s ease-in-out infinite;
-}
-
-.ai-loading {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes sparkle {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
 /* Checkbox Styles */
 .checkbox-label {
     display: flex;
@@ -146,7 +79,7 @@
     user-select: none;
     font-size: 13px;
     color: var(--vscode-foreground);
-    padding: 8px 0;
+    padding: 4px 0;
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -157,8 +90,8 @@
 /* Button Styles */
 .btn {
     border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
+    padding: 8px 16px;
+    border-radius: 4px;
     cursor: pointer;
     font-family: var(--vscode-font-family);
     font-size: 13px;
@@ -167,9 +100,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 100px;
-    margin-right: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 80px;
+    margin-right: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    background-color: var(--vscode-button-background); /* Ensure background */
+    color: var(--vscode-button-foreground); /* Ensure text color */
 }
 
 .btn:last-child {
@@ -226,14 +161,19 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
+    min-height: 40px; /* Reduce from 50px */
+    background-color: var(--vscode-editor-background);
+    border: 1px solid var(--vscode-panel-border);
+    border-radius: 6px;
+    padding: 8px; /* Reduce from 12px */
 }
 
 /* Status Message */
 .status-message {
-    margin-top: 16px;
-    padding: 12px;
-    border-radius: 6px;
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 4px;
     text-align: center;
     font-size: 13px;
     display: none;
@@ -256,7 +196,7 @@
 /* Responsive Design */
 @media (max-width: 480px) {
     .main-container {
-        padding: 12px;
+        padding: 6px;
     }
     
     .actions-section {
@@ -266,7 +206,7 @@
     .btn {
         width: 100%;
         margin-right: 0;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
     }
     
     .btn:last-child {
@@ -276,16 +216,16 @@
 
 /* Legacy support for old elements */
 .controls {
-    margin: 10px 0;
+    margin: 6px 0;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 #commit-message {
     width: 100%;
-    min-height: 100px;
-    margin-bottom: 10px;
+    min-height: 80px;
+    margin-bottom: 8px;
     padding: 8px;
     border: 1px solid var(--vscode-input-border);
     background-color: var(--vscode-input-background);
@@ -304,8 +244,8 @@ button {
     background-color: var(--vscode-button-background);
     color: var(--vscode-button-foreground);
     border: none;
-    padding: 8px 14px;
-    margin-right: 8px;
+    padding: 6px 12px;
+    margin-right: 6px;
     cursor: pointer;
     font-family: var(--vscode-font-family);
     font-size: var(--vscode-font-size);
@@ -331,23 +271,23 @@ label {
 
 .message-container {
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
 .ai-button {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 4px;
+    right: 4px;
     background-color: var(--vscode-button-secondaryBackground);
     color: var(--vscode-button-secondaryForeground);
     border: 1px solid var(--vscode-button-border);
-    padding: 4px 8px;
+    padding: 3px 6px;
     font-size: 11px;
     cursor: pointer;
     border-radius: 3px;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     opacity: 0.8;
     transition: opacity 0.2s;
 }
@@ -366,6 +306,15 @@ label {
     animation: spin 1s linear infinite;
 }
 
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.ai-icon {
+    font-size: 12px;
+}
+
 .ai-text {
     font-size: 10px;
     white-space: nowrap;
@@ -373,5 +322,5 @@ label {
 
 .button-container {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
