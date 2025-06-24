@@ -2,11 +2,11 @@
 (function() {
     const vscode = acquireVsCodeApi();
 
-    const commitMessageTextarea = document.getElementById('commit-message');
-    const amendCheckbox = document.getElementById('amend-checkbox');
-    const commitButton = document.getElementById('commit-button');
-    const commitPushButton = document.getElementById('commit-push-button');
-    const aiGenerateButton = document.getElementById('ai-generate-button');
+    const commitMessageTextarea = document.getElementById('commitMessage');
+    const amendCheckbox = document.getElementById('amendCheckbox');
+    const commitButton = document.getElementById('commitButton');
+    const commitPushButton = document.getElementById('commitPushButton');
+    const aiGenerateButton = document.getElementById('generateButton');
 
     // Handle AI generation button click
     aiGenerateButton?.addEventListener('click', () => {
@@ -38,7 +38,7 @@
                     
                     // Reset button state
                     if (aiIcon) aiIcon.style.display = 'inline';
-                    if (aiText) aiText.textContent = 'Generate with AI';
+                    if (aiText) aiText.textContent = 'Generate AI Message';
                     if (aiLoading) aiLoading.style.display = 'none';
                     if (aiGenerateButton) aiGenerateButton.disabled = false;
 
