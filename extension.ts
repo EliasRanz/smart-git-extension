@@ -3,7 +3,6 @@ import { getGitApi } from './src/git/GitApi';
 import { GitService } from './src/git/GitService';
 import { CommitViewProvider } from './src/git/ui/CommitViewProvider';
 import { CommitPanelProvider } from './src/git/ui/CommitPanelProvider';
-import { GitTreeViewProvider } from './src/git/ui/GitTreeViewProvider';
 import { registerCommands } from './src/git/commands/commands';
 
 /**
@@ -66,13 +65,6 @@ export async function activate(context: vscode.ExtensionContext) {
         // Initialize the Webview Panel for the commit message and actions
         const commitPanelProvider = new CommitPanelProvider(context.extensionUri, gitService);
         vscode.window.registerWebviewViewProvider('smart-git-view.commit-panel', commitPanelProvider);
-        
-        // Initialize the Git Tree View (placeholder for now)
-        const gitTreeProvider = new GitTreeViewProvider(gitService);
-        vscode.window.createTreeView('smart-git-view.tree', {
-            treeDataProvider: gitTreeProvider,
-            showCollapseAll: true
-        });
         
         // Register all commands for the extension
         registerCommands(context, gitService, commitViewProvider);

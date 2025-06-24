@@ -103,10 +103,6 @@ function registerUtilityCommands(gitService: GitService): vscode.Disposable[] {
         }
     });
 
-    const showGitTreeCommand = vscode.commands.registerCommand('smart-git.showGitTree', () => {
-        vscode.window.showInformationMessage('Git Tree view is coming soon!');
-    });
-
     const diagnosticsCommand = vscode.commands.registerCommand('smart-git.diagnostics', async () => {
         try {
             await showGitDiagnostics(gitService);
@@ -117,7 +113,7 @@ function registerUtilityCommands(gitService: GitService): vscode.Disposable[] {
         }
     });
 
-    return [debugCommitSetupCommand, showGitTreeCommand, diagnosticsCommand];
+    return [debugCommitSetupCommand, diagnosticsCommand];
 }
 
 async function showGitDiagnostics(gitService: GitService): Promise<void> {
@@ -129,7 +125,18 @@ async function showGitDiagnostics(gitService: GitService): Promise<void> {
     output.appendLine(`Timestamp: ${new Date().toISOString()}`);
     output.appendLine('');
 
-    // Workspace information
+    writeWorkspaceInfo(output);
+    await writeRepositoryInfo(output, gitService);
+    writeExtensionInfo(output);
+
+    output.appendLine('=== End Diagnostics ===');
+    vscode.window.showInformationMessage('Git diagnostics complete! Check the output panel for details.');
+}
+
+/**
+ * Writes workspace information to the diagnostics output.
+ */
+function writeWorkspaceInfo(output: vscode.OutputChannel): void {
     output.appendLine('--- Workspace Information ---');
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (workspaceFolders) {
@@ -140,44 +147,71 @@ async function showGitDiagnostics(gitService: GitService): Promise<void> {
         output.appendLine('No workspace folders found');
     }
     output.appendLine('');
+}
 
-    // Repository information
+/**
+ * Writes repository information to the diagnostics output.
+ */
+async function writeRepositoryInfo(output: vscode.OutputChannel, gitService: GitService): Promise<void> {
     output.appendLine('--- Repository Information ---');
     const repositories = gitService.getRepositories();
     output.appendLine(`Found ${repositories.length} repositories:`);
     
     if (repositories.length === 0) {
-        output.appendLine('❌ No Git repositories found!');
-        output.appendLine('Solutions:');
-        output.appendLine('  • Make sure you have opened a Git repository in VS Code');
-        output.appendLine('  • Run "git init" in your project folder if it\'s not a Git repo yet');
-        output.appendLine('  • Check if the Git extension is enabled in VS Code');
+        writeNoRepositoriesHelp(output);
     } else {
         for (let i = 0; i < repositories.length; i++) {
-            const repo = repositories[i];
-            output.appendLine(`Repository ${i + 1}:`);
-            output.appendLine(`  Path: ${repo.rootUri.fsPath}`);
-            output.appendLine(`  State: ${JSON.stringify(repo.state, null, 2)}`);
-            
-            try {
-                const changedFiles = await gitService.getChangedFiles(repo);
-                output.appendLine(`  Changed files: ${changedFiles.length}`);
-                changedFiles.forEach(file => {
-                    output.appendLine(`    - ${file.fsPath}`);
-                });
-                
-                const selectedFiles = gitService.getSelectedFiles(repo.rootUri);
-                output.appendLine(`  Selected files: ${selectedFiles.length}`);
-                selectedFiles.forEach(file => {
-                    output.appendLine(`    - ${file.fsPath}`);
-                });
-            } catch (error) {
-                output.appendLine(`  ❌ Error getting file information: ${error}`);
-            }
-            output.appendLine('');
+            await writeRepositoryDetails(output, repositories[i], i + 1, gitService);
         }
     }
+}
 
+/**
+ * Writes help information when no repositories are found.
+ */
+function writeNoRepositoriesHelp(output: vscode.OutputChannel): void {
+    output.appendLine('❌ No Git repositories found!');
+    output.appendLine('Solutions:');
+    output.appendLine('  • Make sure you have opened a Git repository in VS Code');
+    output.appendLine('  • Run "git init" in your project folder if it\'s not a Git repo yet');
+    output.appendLine('  • Check if the Git extension is enabled in VS Code');
+}
+
+/**
+ * Writes details for a specific repository.
+ */
+async function writeRepositoryDetails(
+    output: vscode.OutputChannel,
+    repo: Repository,
+    index: number,
+    gitService: GitService
+): Promise<void> {
+    output.appendLine(`Repository ${index}:`);
+    output.appendLine(`  Path: ${repo.rootUri.fsPath}`);
+    output.appendLine(`  State: ${JSON.stringify(repo.state, null, 2)}`);
+    
+    try {
+        const changedFiles = await gitService.getChangedFiles(repo);
+        output.appendLine(`  Changed files: ${changedFiles.length}`);
+        changedFiles.forEach(file => {
+            output.appendLine(`    - ${file.fsPath}`);
+        });
+        
+        const selectedFiles = gitService.getSelectedFiles(repo.rootUri);
+        output.appendLine(`  Selected files: ${selectedFiles.length}`);
+        selectedFiles.forEach(file => {
+            output.appendLine(`    - ${file.fsPath}`);
+        });
+    } catch (error) {
+        output.appendLine(`  ❌ Error getting file information: ${error}`);
+    }
+    output.appendLine('');
+}
+
+/**
+ * Writes extension information to the diagnostics output.
+ */
+function writeExtensionInfo(output: vscode.OutputChannel): void {
     output.appendLine('--- Extension Status ---');
     try {
         const gitExtension = vscode.extensions.getExtension('vscode.git');
@@ -190,9 +224,5 @@ async function showGitDiagnostics(gitService: GitService): Promise<void> {
     } catch (error) {
         output.appendLine(`❌ Error checking Git extension: ${error}`);
     }
-
     output.appendLine('');
-    output.appendLine('=== End Diagnostics ===');
-    
-    vscode.window.showInformationMessage('Git diagnostics complete! Check the output panel for details.');
 }

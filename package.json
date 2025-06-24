@@ -39,12 +39,6 @@
           "id": "smart-git-view.commit-panel",
           "name": "Commit",
           "type": "webview"
-        },
-        {
-          "id": "smart-git-view.tree",
-          "name": "Git Tree",
-          "type": "tree",
-          "icon": "$(git-branch)"
         }
       ]
     },
@@ -87,11 +81,6 @@
       {
         "command": "smart-git.debugCommitSetup",
         "title": "Debug Commit Setup"
-      },
-      {
-        "command": "smart-git.showGitTree",
-        "title": "Show Git Tree",
-        "icon": "$(git-branch)"
       }
     ],
     "menus": {
@@ -99,11 +88,6 @@
         {
           "command": "smart-git.refresh",
           "when": "view == smart-git-view.changes",
-          "group": "navigation"
-        },
-        {
-          "command": "smart-git.showGitTree",
-          "when": "view == smart-git-view.tree",
           "group": "navigation"
         }
       ],
