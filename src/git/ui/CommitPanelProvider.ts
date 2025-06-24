@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { GitService } from '../GitService';
 import { Repository } from '../git.d';
-import { HtmlTemplateBuilder, HtmlTemplateConfig, HtmlElement } from './HtmlTemplateBuilder';
+import { LitHtmlTemplate } from './LitHtmlTemplate';
 
 interface WebviewMessage {
     type: string;
@@ -179,70 +179,13 @@ export class CommitPanelProvider implements vscode.WebviewViewProvider {
     }
 
     /**
-     * Generates the HTML content for the webview.
-     * 
-     * Alternative approach using AdvancedTemplateBuilder:
-     * 
-     * ```typescript
-     * private async _getHtmlForWebviewAlt(webview: vscode.Webview): Promise<string> {
-     *     const templateData = AdvancedTemplateBuilder.createWebviewConfig(
-     *         webview, this._extensionUri, 'Smart Git Commit'
-     *     );
-     *     return AdvancedTemplateBuilder.loadTemplate(this._extensionUri, 'commit-panel', templateData);
-     * }
-     * ```
+     * Generates the HTML content for the webview using lit-html.
      */
     private _getHtmlForWebview(webview: vscode.Webview): string {
-        const { scriptUri, styleResetUri, styleVSCodeUri } = this.getWebviewResources(webview);
         const nonce = getNonce();
-
-        const config: HtmlTemplateConfig = {
-            title: 'Smart Git Commit',
-            cspSource: webview.cspSource,
-            nonce,
-            styles: [styleResetUri.toString(), styleVSCodeUri.toString()],
-            scripts: [scriptUri.toString()]
-        };
-
-        const elements = this.createCommitPanelElements();
-        return HtmlTemplateBuilder.buildDocument(config, elements);
+        return LitHtmlTemplate.createCommitPanelHtml(webview, this._extensionUri, nonce);
     }
 
-    /**
-     * Creates the UI elements for the commit panel.
-     */
-    private createCommitPanelElements(): HtmlElement[] {
-        const el = HtmlTemplateBuilder.createElements();
-        
-        return [
-            el.heading('Smart Git Commit'),
-            el.textarea('commitMessage', 'Enter commit message or generate one...', 4),
-            el.buttonGroup([
-                el.button('generateButton', 'Generate AI Message'),
-                el.checkbox('amendCheckbox', 'Amend last commit')
-            ]),
-            el.buttonGroup([
-                el.button('commitButton', 'Commit'),
-                el.button('commitPushButton', 'Commit & Push')
-            ]),
-            el.statusDiv()
-        ];
-    }
-
-    /**
-     * Gets webview resource URIs.
-     */
-    private getWebviewResources(webview: vscode.Webview): {
-        scriptUri: vscode.Uri;
-        styleResetUri: vscode.Uri;
-        styleVSCodeUri: vscode.Uri;
-    } {
-        return {
-            scriptUri: webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js')),
-            styleResetUri: webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css')),
-            styleVSCodeUri: webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'))
-        };
-    }
 }
 
 /**
