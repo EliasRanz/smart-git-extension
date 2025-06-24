@@ -40,8 +40,7 @@ export class LitHtmlTemplate {
                             id="commitMessage" 
                             class="commit-textarea" 
                             placeholder="Enter commit message or generate one..." 
-                            rows="4">
-                        </textarea>
+                            rows="4"></textarea>
                         <button id="generateButton" type="button" class="ai-button">
                             <span class="ai-icon">✨</span>
                             <span class="ai-text">Generate with AI</span>
@@ -215,8 +214,7 @@ export class LitHtmlTemplate {
                             id="commitMessage" 
                             class="commit-textarea" 
                             placeholder="Enter commit message or generate one..." 
-                            rows="4">
-                        </textarea>
+                            rows="4"></textarea>
                         <button id="generateButton" type="button" class="ai-button">
                             <span class="ai-icon">✨</span>
                             <span class="ai-text">Generate with AI</span>

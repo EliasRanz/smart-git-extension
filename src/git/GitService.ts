@@ -116,18 +116,64 @@ export class GitService {
         const selectedUris = this.getSelectedFiles(repository.rootUri);
         console.log(`Staging ${selectedUris.length} selected files:`, selectedUris.map(uri => uri.fsPath));
         
+        // If no files are explicitly selected, stage all changed files
         if (selectedUris.length === 0) {
-            throw new Error('No files selected for staging');
-        }
-        
-        try {
-            // Stage each selected file
-            for (const uri of selectedUris) {
-                await repository.add([uri]);
+            console.log('No files explicitly selected, staging all changed files...');
+            const changedFiles = await this.getChangedFiles(repository);
+            
+            if (changedFiles.length === 0) {
+                throw new Error('No changed files to stage. Make some changes first.');
             }
-            console.log('Successfully staged selected files');
-        } catch (error: unknown) {
-            console.error('Failed to stage files:', error);
+            
+            console.log(`Found ${changedFiles.length} changed files to stage`);
+            
+            try {
+                // Stage all changed files
+                for (const uri of changedFiles) {
+                    await repository.add([uri]);
+                }
+                console.log('Successfully staged all changed files');
+            } catch (error: unknown) {
+                console.error('Failed to stage changed files:', error);
+                // Fallback: try staging with simple-git
+                await this.stageWithSimpleGit(repository, changedFiles);
+            }
+        } else {
+            try {
+                // Stage each selected file
+                for (const uri of selectedUris) {
+                    await repository.add([uri]);
+                }
+                console.log('Successfully staged selected files');
+            } catch (error: unknown) {
+                console.error('Failed to stage selected files:', error);
+                // Fallback: try staging with simple-git
+                await this.stageWithSimpleGit(repository, selectedUris);
+            }
+        }
+    }
+
+    /**
+     * Fallback staging using simple-git library.
+     */
+    private async stageWithSimpleGit(repository: Repository, files: vscode.Uri[]): Promise<void> {
+        const simpleGitInstance = this._simpleGitInstances.get(repository.rootUri.fsPath);
+        if (!simpleGitInstance) {
+            throw new Error('Simple-git instance not found for repository');
+        }
+
+        try {
+            console.log('Using simple-git fallback for staging...');
+            const filePaths = files.map(uri => {
+                // Convert absolute path to relative path from repository root
+                const relativePath = vscode.workspace.asRelativePath(uri, false);
+                return relativePath;
+            });
+            
+            await simpleGitInstance.add(filePaths);
+            console.log('Successfully staged files with simple-git');
+        } catch (error) {
+            console.error('Simple-git staging failed:', error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             throw new Error(`Failed to stage files: ${errorMessage}`);
         }
@@ -145,15 +191,39 @@ export class GitService {
         }
 
         try {
+            console.log(`Starting commit process...`);
+            console.log(`Repository path: ${repository.rootUri.fsPath}`);
+            console.log(`Repository state:`, repository.state);
             console.log(`Committing with message: "${message}", amend: ${amend}`);
             
-            if (amend) {
-                await repository.commit(message, { amend: true });
-            } else {
-                await repository.commit(message);
+            // Check if repository is in a valid state
+            if (!repository.state) {
+                throw new Error('Repository state is not available');
             }
             
-            console.log('Commit successful');
+            // Stage selected files first (unless amending)
+            if (!amend) {
+                console.log('Staging selected files...');
+                await this.stageSelectedFiles(repository);
+            }
+            
+            console.log('About to commit...');
+            
+            // Try VS Code Git API first, fallback to simple-git
+            try {
+                if (amend) {
+                    await repository.commit(message, { amend: true });
+                } else {
+                    await repository.commit(message);
+                }
+                console.log('Commit completed successfully via VS Code Git API');
+            } catch (vscodeGitError) {
+                console.warn('VS Code Git API failed, trying simple-git fallback:', vscodeGitError);
+                await this.commitWithSimpleGit(repository, message, amend);
+                console.log('Commit completed successfully via simple-git');
+            }
+            
+            vscode.window.showInformationMessage('Commit successful!');
             
             // Clear selection after successful commit
             await this._fileSelectionService.clearSelection(repository.rootUri);
@@ -162,7 +232,29 @@ export class GitService {
         } catch (error: unknown) {
             console.error('Commit failed:', error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            vscode.window.showErrorMessage(`Commit failed: ${errorMessage}`);
             throw new Error(`Commit failed: ${errorMessage}`);
+        }
+    }
+
+    /**
+     * Fallback commit using simple-git library.
+     */
+    private async commitWithSimpleGit(repository: Repository, message: string, amend: boolean): Promise<void> {
+        const simpleGitInstance = this._simpleGitInstances.get(repository.rootUri.fsPath);
+        if (!simpleGitInstance) {
+            throw new Error('Simple-git instance not found for repository');
+        }
+
+        try {
+            if (amend) {
+                await simpleGitInstance.commit(message, undefined, { '--amend': null });
+            } else {
+                await simpleGitInstance.commit(message);
+            }
+        } catch (error) {
+            console.error('Simple-git commit failed:', error);
+            throw error;
         }
     }
 

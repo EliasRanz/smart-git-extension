@@ -88,14 +88,27 @@ export class CommitPanelProvider implements vscode.WebviewViewProvider {
      * Gets the active repository for operations.
      */
     private getActiveRepository(): Repository | null {
-        const activeRepo = this._gitService.getRepositories()[0];
+        const repositories = this._gitService.getRepositories();
+        console.log(`Found ${repositories.length} repositories:`, repositories.map(r => r.rootUri.fsPath));
         
-        if (!activeRepo) {
-            vscode.window.showErrorMessage("No active repository found.");
-            console.error('No active repository found. Available repos:', this._gitService.getRepositories());
+        if (repositories.length === 0) {
+            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+            if (workspaceFolder) {
+                vscode.window.showErrorMessage(
+                    `No Git repository found in workspace folder: ${workspaceFolder.uri.fsPath}. ` +
+                    `Make sure this is a Git repository (run 'git init' if needed).`
+                );
+            } else {
+                vscode.window.showErrorMessage(
+                    "No workspace folder or Git repository found. Please open a Git repository in VS Code."
+                );
+            }
             return null;
         }
 
+        // Use the first repository (could be enhanced to let user choose)
+        const activeRepo = repositories[0];
+        console.log(`Using repository: ${activeRepo.rootUri.fsPath}`);
         this.logRepositoryInfo(activeRepo);
         return activeRepo;
     }
