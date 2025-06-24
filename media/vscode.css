@@ -1,0 +1,110 @@
+/* VS Code specific styles */
+.controls {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#commit-message {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid var(--vscode-input-border);
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    resize: vertical;
+}
+
+#commit-message:focus {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+button {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    padding: 8px 14px;
+    margin-right: 8px;
+    cursor: pointer;
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+}
+
+button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+button:focus {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+}
+
+input[type="checkbox"] {
+    margin: 0;
+}
+
+label {
+    cursor: pointer;
+    user-select: none;
+}
+
+.message-container {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.ai-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+    border: 1px solid var(--vscode-button-border);
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.ai-button:hover {
+    opacity: 1;
+    background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.ai-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ai-button .ai-loading {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.ai-icon {
+    font-size: 12px;
+}
+
+.ai-text {
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+.button-container {
+    display: flex;
+    gap: 8px;
+}
