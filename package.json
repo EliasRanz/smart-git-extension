@@ -165,6 +165,7 @@
     "webpack-cli": "^5.0.0"
   },
   "dependencies": {
+    "lit-html": "^3.3.0",
     "simple-git": "^3.15.1"
   },
   "lint-staged": {
